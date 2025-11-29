@@ -20,10 +20,10 @@ app.use(express.static(path.join(__dirname, '../frontend/dist'))); // Serve fron
 app.use('/auth', authRoutes);
 app.use('/api/verify', verifyRoutes);
 
-// Serve Frontend for all other routes (SPA support)
-app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
+// Serve Frontend for all other routes (SPA support) - DISABLED to prevent auto-home redirect
+// app.get(/.*/, (req, res) => {
+//     res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+// });
 
 // Start Bot and Server
 initBot().then(() => {
