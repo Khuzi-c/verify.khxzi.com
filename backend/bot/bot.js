@@ -17,7 +17,7 @@ const CONFIG = {
     VERIFY_PANEL_CHANNEL_ID: '1418927251998904343',
     VERIFICATION_LOGS_CHANNEL_ID: '1419643571463651399',
     ADMIN_ROLE_ID: '1418550771426791535',
-    PANEL_FOOTER_TEXT: 'verify-panel-khxzi'
+    PANEL_FOOTER_TEXT: '[Verification Panel](https://verify.khxzi.com)'
 };
 
 async function initBot() {
@@ -66,7 +66,23 @@ async function ensureVerifyPanel() {
         );
 
         if (existingPanel) {
-            console.log('Verify panel already exists.');
+            console.log('Verify panel exists, updating...');
+            const embed = new EmbedBuilder()
+                .setTitle('Verify Now — Khxzi')
+                .setDescription('Click the button below to sign in with Discord and start your verification process.')
+                .setColor(0x5865F2)
+                .setFooter({ text: CONFIG.PANEL_FOOTER_TEXT });
+
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setLabel('Verify Now')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL('https://verify.khxzi.com')
+                );
+
+            await existingPanel.edit({ embeds: [embed], components: [row] });
+            console.log('Verify panel updated.');
             return;
         }
 
