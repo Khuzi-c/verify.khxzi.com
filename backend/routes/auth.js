@@ -13,7 +13,7 @@ const DISCORD_API = 'https://discord.com/api';
 // So if we have `router.get('/discord/callback')` inside `auth.js`, the full path is `/auth/discord/callback`.
 
 router.get('/login', (req, res) => {
-    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://localhost:3004/auth/discord/callback';
+    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://verify.khxzi.com/auth/discord/callback';
     const clientId = process.env.DISCORD_CLIENT_ID || '1444061578709303436';
     const scope = 'email identify guilds.join openid guilds';
 
