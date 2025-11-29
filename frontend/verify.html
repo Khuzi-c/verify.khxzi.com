@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit Verification - Khxzi</title>
+    <link rel="icon" type="image/png" href="/logo_big.png">
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/logo.png" alt="Logo" style="height: 90px; vertical-align: middle; margin-right: 0px;">
+            Devs
+        </div>
+    </nav>
+    <div id="app">
+        <div class="container">
+            <h1>Verification Code</h1>
+            <div id="user-info"></div>
+
+            <div id="verification-panel">
+                <p class="instruction-text">A verification code has been sent to your Discord DMs.</p>
+
+                <div class="code-input-container">
+                    <input type="text" id="verification-code" placeholder="Enter 6-digit code" maxlength="6"
+                        autocomplete="off">
+                    <button id="verify-btn" class="btn-primary">Verify Code</button>
+                </div>
+
+                <script type="module" src="/verify.js"></script>
+</body>
+
+</html>

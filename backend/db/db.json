@@ -1,0 +1,35 @@
+{
+  "requests": [
+    {
+      "id": "73d3bf17-4d1b-4718-b171-3a3c08335da4",
+      "discordId": "1342119031552872489",
+      "discordTag": "khxzi_bxtt#0",
+      "method": [
+        "email",
+        "email"
+      ],
+      "notes": "67",
+      "attachments": [
+        "1764419691624-no bg khxzi logo.png"
+      ],
+      "status": "pending",
+      "createdAt": "2025-11-29T12:34:51.630Z"
+    },
+    {
+      "id": "6d10b4c2-c9a7-4bdd-9a1f-73cf1d6c0e61",
+      "discordId": "1342119031552872489",
+      "discordTag": "khxzi_bxtt#0",
+      "method": [
+        "email",
+        "passport"
+      ],
+      "notes": "https://discord.com/channels/@me/1443596911863926854",
+      "attachments": [
+        "1764420614789-no bg khxzi full logo.png"
+      ],
+      "status": "pending",
+      "createdAt": "2025-11-29T12:50:14.797Z"
+    }
+  ],
+  "codes": {}
+}

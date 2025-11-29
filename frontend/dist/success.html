@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verified - Khxzi</title>
+    <link rel="icon" type="image/png" href="/logo_big.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" crossorigin href="/assets/style-DkXwlFmm.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/logo.png" alt="Logo" style="height: 90px; vertical-align: middle; margin-right: 0px;">
+            Devs
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="verification-card">
+            <div class="card-banner" style="background: linear-gradient(45deg, #004d00, #008000);"></div>
+            <div class="card-profile">
+                <div class="profile-image" style="border: 2px solid #00ff00;">
+                    <img src="/logo.png" alt="Success">
+                </div>
+                <div class="profile-info">
+                    <h2>Verified!</h2>
+                    <div class="stats">
+                        <span><i class="fa-solid fa-check-circle" style="color: #00ff00;"></i> Access Granted</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body" style="text-align: center;">
+                <p style="color: #a0a0a0; margin-bottom: 2rem;">
+                    You have been successfully verified. You will be redirected to the server in <span id="countdown"
+                        style="color: white; font-weight: bold;">5</span> seconds.
+                </p>
+
+                <a href="https://discord.gg/THbZwYpsJs" class="btn-verify"
+                    style="display: block; text-decoration: none; background-color: #00aa00;">
+                    <i class="fa-brands fa-discord"></i> Join Server Now
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let seconds = 5;
+        const countdownEl = document.getElementById('countdown');
+
+        const interval = setInterval(() => {
+            seconds--;
+            countdownEl.textContent = seconds;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = 'https://discord.gg/THbZwYpsJs';
+            }
+        }, 1000);
+    </script>
+</body>
+
+</html>
