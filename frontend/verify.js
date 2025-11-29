@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const timerSpan = document.getElementById('timer');
 
     if (!session) {
+        console.log('No session found in URL');
         window.location.href = '/';
         return;
     }
+    console.log('Session found:', session);
 
     try {
         const userData = JSON.parse(atob(session));
@@ -24,7 +26,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (e) {
         console.error('Invalid session:', e);
-        window.location.href = '/';
+        console.error('Invalid session:', e);
+        // window.location.href = '/'; // Disabled for debugging
+        userInfoDiv.innerHTML = `<p style="color:red">Error loading session: ${e.message}</p>`;
     }
 
     async function sendCode(discordId) {
