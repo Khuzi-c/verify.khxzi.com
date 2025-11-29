@@ -67,7 +67,7 @@ router.get('/discord/callback', async (req, res) => {
             avatar: user.avatar
         })).toString('base64');
 
-        res.redirect(`http://localhost:3004/verify.html?session=${sessionData}`);
+        res.redirect(`${process.env.BACKEND_BASE}/verify.html?session=${sessionData}`);
 
     } catch (error) {
         console.error('OAuth Error:', error.response ? error.response.data : error.message);
