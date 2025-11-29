@@ -1,4 +1,4 @@
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3004' : '';
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3004' : 'https://verify.khxzi.com';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
