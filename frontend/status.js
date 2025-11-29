@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3004';
+const BACKEND_URL = 'https://verify.khxzi.com';
 const urlParams = new URLSearchParams(window.location.search);
 const requestId = urlParams.get('id');
 
