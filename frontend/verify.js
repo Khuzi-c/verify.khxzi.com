@@ -1,5 +1,4 @@
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3004' : 'https://verify.khxzi.com';
-
+const API_BASE = window.location.hostname === 'https://verify.khxzi.com';
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const session = urlParams.get('session');
@@ -12,7 +11,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!session) {
         console.log('No session found in URL');
-        window.location.href = '/';
+        // window.location.href = '/'; // Disabled for debugging
+        document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:50px;">Error: No Session Found in URL</h1><p style="text-align:center">Please try logging in again via Discord.</p>';
         return;
     }
     console.log('Session found:', session);
