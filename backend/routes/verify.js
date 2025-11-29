@@ -1,103 +1,112 @@
-const express = require('express');
-const router = express.Router();
-const { saveCode, getCode, deleteCode } = require('../db/store');
-const { sendVerificationCode, sendVerifiedSuccess, CONFIG } = require('../bot/bot');
-const { client } = require('../bot/bot');
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3004' : 'https://verify.khxzi.com';
 
-// Send Verification Code
-router.post('/send', async (req, res) => {
-    try {
-        const { discordId } = req.body;
-        if (!discordId) return res.status(400).json({ error: 'Missing Discord ID' });
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const session = urlParams.get('session');
+    const userInfoDiv = document.getElementById('user-info');
+    const verifyBtn = document.getElementById('verify-btn');
+    const resendBtn = document.getElementById('resend-btn');
+    const codeInput = document.getElementById('verification-code');
+    const errorMsg = document.getElementById('error-message');
+    const timerSpan = document.getElementById('timer');
 
-        // Check Cooldown (1 minute)
-        const existing = getCode(discordId);
-        if (existing && Date.now() - existing.lastSent < 60000) {
-            const remaining = Math.ceil((60000 - (Date.now() - existing.lastSent)) / 1000);
-            return res.status(429).json({ error: `Please wait ${remaining}s before resending.` });
-        }
-
-        // Generate 6-digit code
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Send DM via Bot
-        const result = await sendVerificationCode(discordId, code);
-        if (!result.success) {
-            return res.status(500).json({ error: result.error });
-        }
-
-        // Save to DB (Expires in 5 mins)
-        saveCode(discordId, {
-            code,
-            expiresAt: Date.now() + 5 * 60 * 1000,
-            lastSent: Date.now()
-        });
-
-        res.json({ success: true });
-
-    } catch (error) {
-        console.error('Send Code Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    if (!session) {
+        window.location.href = '/';
+        return;
     }
-});
 
-// Check Verification Code
-router.post('/check', async (req, res) => {
     try {
-        const { discordId, code } = req.body;
-        if (!discordId || !code) return res.status(400).json({ error: 'Missing data' });
+        const userData = JSON.parse(atob(session));
+        userInfoDiv.innerHTML = `<p>Logged in as: <strong>${userData.username}#${userData.discriminator}</strong></p>`;
 
-        const record = getCode(discordId);
+        // Auto-send code on load
+        await sendCode(userData.id);
 
-        if (!record) {
-            return res.status(400).json({ error: 'No verification code found. Please request a new one.' });
-        }
+    } catch (e) {
+        console.error('Invalid session:', e);
+        console.error('Invalid session:', e);
+        // window.location.href = '/'; // Disabled for debugging
+        userInfoDiv.innerHTML = `<p style="color:red">Error loading session: ${e.message}</p>`;
+    }
 
-        if (Date.now() > record.expiresAt) {
-            return res.status(400).json({ error: 'Code expired. Please request a new one.' });
-        }
+    async function sendCode(discordId) {
+        resendBtn.disabled = true;
+        try {
+            const res = await fetch(`${API_BASE}/api/verify/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ discordId })
+            });
+            const data = await res.json();
 
-        if (record.code !== code) {
-            return res.status(400).json({ error: 'Invalid code.' });
-        }
-
-        // Code is valid! Assign Role
-        const guild = client.guilds.cache.first(); // Or find by ID if multiple
-        // Better: Find guild by CONFIG role
-        let targetGuild = null;
-        for (const [id, g] of client.guilds.cache) {
-            try {
-                if (await g.roles.fetch(CONFIG.VERIFIED_ROLE_ID)) {
-                    targetGuild = g;
-                    break;
-                }
-            } catch (e) { }
-        }
-
-        if (targetGuild) {
-            const member = await targetGuild.members.fetch(discordId).catch(() => null);
-            if (member) {
-                await member.roles.add(CONFIG.VERIFIED_ROLE_ID);
-                await member.roles.remove(CONFIG.UNVERIFIED_ROLE_ID);
-
-                // Send Success DM
-                await sendVerifiedSuccess(discordId);
-
-                // Log Verification
-                const { logVerification } = require('../bot/bot');
-                await logVerification({ discordId, method: 'Code Verification', notes: 'Verified via Code' }, null, 'Approved');
+            if (data.success) {
+                startCooldown(60);
+            } else {
+                showError(data.error || 'Failed to send code.');
+                resendBtn.disabled = false;
             }
+        } catch (err) {
+            showError('Network error sending code.');
+            resendBtn.disabled = false;
+        }
+    }
+
+    verifyBtn.addEventListener('click', async () => {
+        const code = codeInput.value.trim();
+        if (code.length !== 6) {
+            showError('Please enter a valid 6-digit code.');
+            return;
         }
 
-        // Cleanup
-        deleteCode(discordId);
+        const userData = JSON.parse(atob(session));
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = 'Verifying...';
 
-        res.json({ success: true });
+        try {
+            const res = await fetch(`${API_BASE}/api/verify/check`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ discordId: userData.id, code })
+            });
+            const data = await res.json();
 
-    } catch (error) {
-        console.error('Check Code Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+            if (data.success) {
+                window.location.href = '/success.html';
+            } else {
+                showError(data.error || 'Invalid code.');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Code';
+            }
+        } catch (err) {
+            showError('Network error verifying code.');
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'Verify Code';
+        }
+    });
+
+    resendBtn.addEventListener('click', () => {
+        const userData = JSON.parse(atob(session));
+        sendCode(userData.id);
+    });
+
+    function startCooldown(seconds) {
+        let remaining = seconds;
+        resendBtn.disabled = true;
+        timerSpan.textContent = `(${remaining}s)`;
+
+        const interval = setInterval(() => {
+            remaining--;
+            timerSpan.textContent = `(${remaining}s)`;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                timerSpan.textContent = '';
+                resendBtn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = 'block';
     }
 });
-
-module.exports = router;
