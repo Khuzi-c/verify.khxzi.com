@@ -13,7 +13,7 @@ const DISCORD_API = 'https://discord.com/api';
 // So if we have `router.get('/discord/callback')` inside `auth.js`, the full path is `/auth/discord/callback`.
 
 router.get('/login', (req, res) => {
-    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'https://verify.khxzi.com/auth/discord/callback';
+    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://localhost:3004/auth/discord/callback';
     const clientId = process.env.DISCORD_CLIENT_ID || '1444061578709303436';
     const scope = 'email identify guilds.join openid guilds';
 
@@ -29,7 +29,7 @@ router.get('/discord/callback', async (req, res) => {
     }
 
     try {
-        const redirectUri = process.env.OAUTH_REDIRECT_URI || 'https://verify.khxzi.com/auth/discord/callback';
+        const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://localhost:3004/auth/discord/callback';
 
         // 1. Exchange Code for Token
         const tokenResponse = await axios.post(`${DISCORD_API}/oauth2/token`, new URLSearchParams({
@@ -67,7 +67,7 @@ router.get('/discord/callback', async (req, res) => {
             avatar: user.avatar
         })).toString('base64');
 
-        res.redirect(`${process.env.BACKEND_BASE}/verify.html?session=${sessionData}`);
+        res.redirect(`${process.env.BACKEND_BASE}/verify.html?session=${encodeURIComponent(sessionData)}`);
 
     } catch (error) {
         console.error('OAuth Error:', error.response ? error.response.data : error.message);
