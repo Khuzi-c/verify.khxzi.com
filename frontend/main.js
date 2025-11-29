@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3004';
+const BACKEND_URL = 'https://verify.khxzi.com';
 
 // Update member count (mock for now, or fetch from backend if endpoint exists)
 const memberCountEl = document.getElementById('member-count');
